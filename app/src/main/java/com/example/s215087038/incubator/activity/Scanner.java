@@ -1,7 +1,9 @@
-package com.example.s215087038.incubator;
+package com.example.s215087038.incubator.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.s215087038.incubator.R;
 
 public class Scanner extends AppCompatActivity {
 
