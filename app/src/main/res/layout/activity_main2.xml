@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="3"
-    tools:context="com.example.s215087038.incubator.activity.Main2Activity">
+    tools:context="com.example.s215087038.incubator.activity.activity.Main2Activity">
 
 
     <Button
