@@ -1,6 +1,7 @@
 package com.example.s215087038.incubator.activity.activity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.SQLException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,16 +13,19 @@ import android.widget.EditText;
 import com.example.s215087038.incubator.R;
 import com.example.s215087038.incubator.activity.BuildConf;
 import com.example.s215087038.incubator.activity.UdkService;
+import com.example.s215087038.incubator.activity.data.DeviceDao;
 import com.example.s215087038.incubator.activity.db.DeviceColumn;
 import com.example.s215087038.incubator.activity.entity.Device;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main2Activity extends AppCompatActivity  {
 
     private static final String TAG = "Main2Activity" ;
     Button btnOpen;
     String name, ip , port, password, connectionKey;
+    Context context;
 
 
     private static final String COMMON_ADRESS = "255.255.255.255";
@@ -33,6 +37,7 @@ public class Main2Activity extends AppCompatActivity  {
     public static final int REALIZATE_UDK_CORRERT = -100;
 
     Device mDevice;
+    List<com.example.s215087038.incubator.activity.entity.Door> doorResults = new ArrayList<>();
 
 
     @Override
@@ -41,18 +46,32 @@ public class Main2Activity extends AppCompatActivity  {
         setContentView(R.layout.activity_main2);
 
         btnOpen = (Button) findViewById(R.id.btnOpen);
-        presave();
+
+
         insertDevice();
         btnOpen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 long ret = 0;
                 try {
+                    presave();
+                    mDevice.setHandle(0);
+                    int currentAllDoorNum = DeviceDao.getAllDoorNumFromDb(context);
+                    int currentAllDeviceNum = DeviceDao.getDeviceNumFromDb(context);
+                    Log.d(TAG, "current all door num is" + currentAllDoorNum);
+                    Log.d(TAG, "current all device num is" + currentAllDeviceNum);
                     ret = connectDevice(ip, port, password);
                     if (ret != 0) {
                         //this.mDevice.setConnKey(DeviceActivity.this.deviceManager.getConnPwd(ret));
                        connectionKey =  getConnPwd(ret);
                     }
+
+                    String getOneTouchOpenTime = BuildConf.FLAVOR;
+                    BaseDeviceActivity.OnOpenListener(getOneTouchOpenTime);
+
+//                    context.getSharedPreferences("shared_app", 0).edit();
+//                    editor.putBoolean("one_touch_open_is_open", "isOpen");
+//                    editor.commit();
                 }
                 catch(Exception e){}
             }
@@ -86,10 +105,15 @@ public class Main2Activity extends AppCompatActivity  {
     }
 
     private void presave() {
-        mDevice.setDeviceName(name);
-        mDevice.setiP(ip);
-        mDevice.setPort(port);
-        mDevice.setPassWord(password);
+
+
+        if(this.mDevice == null){
+            this.mDevice = new Device();
+        }
+        this.mDevice.setDeviceName(name);
+        this.mDevice.setiP(ip);
+        this.mDevice.setPort(port);
+        this.mDevice.setPassWord(password);
     }
 
 
